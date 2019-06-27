@@ -133,58 +133,41 @@
     <script src="./js/bootstrap/js/bootstrap.min.js"></script>
     <script>
         $(function () {
-            //给退出的a标签设置一个点击事件
-            $('#btn_logout').on('click', function (e) {
-                e.preventDefault();
-                //发送ajax请求,得到数据
+            // 给a标签(退出)一个点击事件
+            $('#btn_logout').on('click',function(){
+                // 发送ajax请求
                 $.ajax({
-                    type: 'post',
-                    url: 'http://localhost:8000/admin/logout',
-                    success: function (backData) {
-                        //console.log(backData);
-                        //判断
-                        if (backData.code == 200) {
-                            //退出成功,跳转到登录页面
-                            window.location.href = './login.html';
-                        } else {
-                            // alert('退出失败');
-                            //调用bs的模态框的方法弹出模态框.
-                            $('#myModal').modal({
-                                keyboard:true
-                            });
+                    type:'post',
+                    url:'https://autumnfish.cn/big/admin/logout',
+                    success:function(backData){
+                        // console.log(backData);
+                        if(backData.code == 200){
+                            alert('退出成功')
+                            // 退出成功,返回登录界面
+                            window.location.href='./login.html'
+                        }else{
+                            alert('退出失败')
                         }
                     }
-                });
-            });
-            /*
-            步骤:
-            1.给退出的a标签设置一个点击事件.
-                取消他的默认跳转
-            2.发送ajax请求,得到数据
-                如果退出成功,跳转到登录页面.
-            */
+                })
+            })
 
 
 
-
+            // 进入页面,获取用户信息,进行一次渲染
+            // 发送ajax请求
             $.ajax({
                 type:'get',
-                url:'http://localhost:8000/admin/getuser',
+                url:'https://autumnfish.cn/big/admin/getuser',
                 success:function(backData){
-                    //console.log(backData);
-                    //渲染左边
-                    $('.user_info span').html('欢迎&nbsp;&nbsp;'+backData.data.nickname);
-                    $('.user_info img').attr('src',backData.data.user_pic);
-                    //渲染右边
-                    $('.user_center_link img').attr('src',backData.data.user_pic);
+                    // console.log(backData);
+                    // 渲染左边头像和用户名
+                    $('.user_info>img').attr('src',backData.data.user_pic)
+                    $('.user_info>span').html('欢迎&nbsp;&nbsp;'+backData.data.nickname)
+                    // 渲染右边的头像
+                    $('.user_center_link>img').attr('src',backData.data.user_pic)
                 }
-            });
-            /*
-            步骤:
-                1. 进入到首页之后
-                2. 通过用户信息接口获取用户的数据
-                3. 渲染到页面上
-            */
+            })
         });
     </script>
 
