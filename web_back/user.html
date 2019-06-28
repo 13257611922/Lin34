@@ -45,8 +45,9 @@
                     <label for="inputPassword3" class="col-sm-2 control-label">用户图标：</label>
                     <div class="col-sm-10">
                         <img src="images/2.jpg" alt="" class="user_pic"><br>
-                        <label for="exampleInputFile"><img src="./images/uploadFileIcon.png" alt=""></label>
-                        <input type="file" style="opacity: 0" id="exampleInputFile" name="user_pic">
+                        <!-- <label for="exampleInputFile"><img src="./images/uploadFileIcon.png" alt=""></label> -->
+                        <input type="file" id="exampleInputFile" name="user_pic">
+                        <!-- <input type="file" style="opacity: 0" id="exampleInputFile" name="user_pic"> -->
                     </div>
                 </div>
 
@@ -70,80 +71,76 @@
 
     <script>
         $(function () {
-            /*
-            步骤:
-            1. 进入个人中心之后
-            2. 调用获取用户详细信息接口
-            3. 数据获取到之后 渲染到 页面上
-            */
+            // 获取用户信息
+            // 发送ajax请求
             $.ajax({
                 type: 'get',
-                url: 'http://localhost:8000/admin/userinfo_get',
+                url: 'https://autumnfish.cn/big/admin/userinfo_get',
                 success: function (backData) {
-                    console.log(backData);
-                    //把得到的这些数据 依次的填入到对应的标签中.
-                    // $('input.username').val(backData.data.username);
-                    // $('input.nickname').val(backData.data.nickname);
-                    // $('input.email').val(backData.data.email);
-                    // $('input.password').val(backData.data.password);
-                    //上面的四句话可以用下面这一个forin搞定.
+                    // console.log(backData);
+                    // 分别把信息填入相应位置
+                    // $('.username').val(backData.data.username)
+                    // $('.nickname').val(backData.data.nickname)
+                    // $('.email').val(backData.data.email)
+                    // $('.password').val(backData.data.password)
+                    // for in遍历信息填入
                     for (var key in backData.data) {
-                        $('input.' + key).val(backData.data[key]);
+                        // console.log(key);
+                        $('input.' + key).val(backData.data[key])
                     }
-
-                    $('img.user_pic').attr('src', backData.data.user_pic);
+                    // 将获取图片的src给予预览位置
+                    $('.user_pic').attr('src', backData.data.user_pic)
                 }
-            });
 
+            })
 
-            //图像预览
+            // 图片预览
             $('#exampleInputFile').on('change', function () {
-                //获取选中的图片文件.
-                var icon = this.files[0];
-                //根据这个图片文件 创建一个url.
-                var url = URL.createObjectURL(icon);
-                //把这个url交给预览用的img
-                $('img.user_pic').attr('src', url);
-            });
+                // console.log(this.files[0]);
+                // 拿到选中的文件
+                var icon = this.files[0]
+                // 解析并获取文件对象的url,创建一个url
+                var url = URL.createObjectURL(icon)
+                // 把获取到的文件对象的url给到预览的img中
+                $('.user_pic').attr('src', url)
+            })
 
-
-            //给修改按钮设置一个点击事件,注意取消默认 跳转.
+            // 用户信息修改
             $('.btn-success').on('click', function (e) {
                 e.preventDefault();
-                //创建一个formData获取form表单里面的所有数据
-                var formData = new FormData($('form')[0]);
-                //发送ajax请求
+                // 创建一个formData对象
+                var formData = new FromData($('form')[0])
+                // 发送ajax请求
                 $.ajax({
                     type: 'post',
-                    url: 'http://localhost:8000/admin/userinfo_edit',
-                    data: formData,
-                    //下面这句话的意思是不要给我设置请求头.因为我这里发送数据使用的是formData,不需要设置请求头
+                    url: 'https://autumnfish.cn/big/admin/userinfo_edit',
+                    // 不设置请求头
                     contentType: false,
-                    //下面这句话的意思是不要把我传递的参数转成key=value这种格式的字符串.
                     processData: false,
+                    data: formData,
                     success: function (backData) {
-                        console.log(backData);
+                        // console.log(backData);
                         if (backData.code == 200) {
-                            console.log('修改成功!');
-                            //重新的获取用户的基本信息,给主页的左边和右边的用户头像名称修改值.
+                            // 发送ajax,重新渲染页面
                             $.ajax({
                                 type: 'get',
-                                url: 'http://localhost:8000/admin/getuser',
+                                url: 'https://autumnfish.cn/big/admin/getuser',
                                 success: function (backData) {
-                                    //console.log(backData);
-                                    //渲染左边
-                                    parent.$('.user_info span').html('欢迎&nbsp;&nbsp;' + backData.data.nickname);
-                                    parent.$('.user_info img').attr('src', backData.data.user_pic);
-                                    //渲染右边
-                                    parent.$('.user_center_link img').attr('src', backData.data.user_pic);
+                                    // console.log(backData);
+                                    // 渲染左边头像和用户名 (需用服务器的方式打开)
+                                    parent.$('.user_info>img').attr('src', backData.data.user_pic)
+                                    parent.$('.user_info>span').html('欢迎&nbsp;&nbsp;' + backData.data.nickname)
+                                    // 渲染右边的头像
+                                    parent.$('.user_center_link>img').attr('src', backData.data.user_pic)
+                                    // parent.window.location.reload();
                                 }
-                            });
+                            })
                         }
                     }
-                });
-            });
+                })
+            })
 
-        });
+        })
     </script>
 </body>
 
